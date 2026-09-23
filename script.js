@@ -56,49 +56,23 @@ function loadExpenses() {
   }
 }
 
-function getVisibleExpenses() {
-  if (categoryFilter.value === "All") {
-    return expenses;
-  }
-
-  return expenses.filter((expense) => expense.category === categoryFilter.value);
-}
-
 function renderExpenses() {
-  const visibleExpenses = getVisibleExpenses();
-
   expenseList.innerHTML = "";
 
-  visibleExpenses.forEach((expense) => {
+  expenses.forEach((expense) => {
     const row = document.createElement("tr");
-
-    const nameCell = document.createElement("td");
-    nameCell.textContent = expense.name;
-
-    const categoryCell = document.createElement("td");
-    categoryCell.textContent = expense.category;
-
-    const amountCell = document.createElement("td");
-    amountCell.textContent = formatCurrency(expense.amount);
-
-    const actionCell = document.createElement("td");
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "delete-btn";
-    deleteButton.type = "button";
-    deleteButton.dataset.id = expense.id;
-    deleteButton.textContent = "Delete";
-    actionCell.append(deleteButton);
-
-    row.append(nameCell, categoryCell, amountCell, actionCell);
+    row.innerHTML = `
+      <td>${expense.name}</td>
+      <td>${expense.category}</td>
+      <td>${formatCurrency(expense.amount)}</td>
+      <td><button class="delete-btn" type="button" data-id="${expense.id}">Delete</button></td>
+    `;
     expenseList.append(row);
   });
 
-  emptyState.textContent = expenses.length === 0
-    ? "No expenses yet. Add your first one."
-    : "No expenses match this filter.";
-  emptyState.hidden = visibleExpenses.length > 0;
+  emptyState.hidden = expenses.length > 0;
   totalAmount.textContent = formatCurrency(
-    visibleExpenses.reduce((sum, expense) => sum + expense.amount, 0)
+    expenses.reduce((sum, expense) => sum + expense.amount, 0)
   );
 }
 
